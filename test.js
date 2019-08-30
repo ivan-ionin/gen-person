@@ -9,7 +9,7 @@ lib.addGenerator('names', (utils, data) => {
         pseudoName: [data.givenName, '`' + data.nickName + '`', data.familyName].join(' '),
         initialsName: [data.familyName, data.givenName.substr(0, 1) + '.' + data.patronym.substr(0, 1) + '.'].join(' ')
     }
-});
+}, null, 100);
 
 // lib.remGenerator('names');
 

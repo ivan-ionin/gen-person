@@ -6,6 +6,7 @@ const persone = require('./generators/person');
 const nickname = require('./generators/nickname');
 const contacts = require('./generators/contacts');
 const birthdate = require('./generators/birthdate');
+const transliteration = require('./generators/transliteration');
 const utils = require('./common/utils');
 
 let generators = [{
@@ -33,28 +34,36 @@ let generators = [{
     key: 'birthdate',
     safe: true,
     generator: birthdate
+}, {
+    key: 'transliteration',
+    safe: true,
+    order: 1000,
+    config: ['familyName', 'givenName', 'patronym', 'fullName', 'shortName', 'pseudoName', 'initialsName'],
+    generator: transliteration
 }];
 
 class PersonGenerator {
 
     constructor() {
-        
+        generators.forEach((g, i) => {
+            if (!g.order) g.order = (i + 1) * 10;
+        });
     }
 
     generate() {
-        let response = {};
-        Object.keys(generators).forEach(key => {
-            let result = generators[key].generator.apply(this, [utils, response]);
+        let response = {}, gens = generators.sort((a, b) => { return a.order - b.order; });
+        Object.keys(gens).forEach(key => {
+            let result = gens[key].generator.apply(this, [utils, response, gens[key].config || null]);
             if (result instanceof Object) {
                 response = Object.assign({}, response, result);
             } else {
-                response[generators[key].key] = result;
+                response[gens[key].key] = result;
             }
         });
         return response;
     }
 
-    addGenerator(key, generator) {
+    addGenerator(key, generator, config, order) {
         let index;
         if (generators.some((e, i) => { index = i; return e.key === key; })) {
             if (generators.some(e => { return e.key === key && e.safe; })) {
@@ -63,6 +72,8 @@ class PersonGenerator {
                 generators[index] = {
                     key: key,
                     safe: false,
+                    order: order || generators[generators.length - 1].order + 10,
+                    config: config || null,
                     generator: generator
                 };
             }
@@ -70,6 +81,8 @@ class PersonGenerator {
             generators.push({
                 key: key,
                 safe: false,
+                order: order || generators[generators.length - 1].order + 10,
+                config: config || null,
                 generator: generator
             });
         }
@@ -91,7 +104,10 @@ class PersonGenerator {
     showGenerators() {
         let result = [];
         generators.forEach(g => {
-            result.push(g.key);
+            result.push({
+                key: g.key,
+                order: g.order
+            });
         });
         return result;
     }

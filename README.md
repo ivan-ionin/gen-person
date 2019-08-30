@@ -1,4 +1,3 @@
-# Я в шоке, о Боже, вот это да! (< это не я писал, это соратники докинули)
 # gen-person
 Генерация пользователей
 
@@ -14,19 +13,47 @@
     npm test
 
     // {
-    //    id: 4245,
-    //    uuid: 'c3ecf92a-cc03-491b-afdb-caf6af4a4c2a',
-    //    familyName: 'Завьялов',
-    //    givenName: 'Иулиан',
-    //    patronym: 'Климентович',
-    //    gender: 'm',
-    //    nickName: 'Osixo',
-    //    email: 'osixo@google.com',
-    //    phone: 79879513950,
-    //    birthDate: 2001-08-27T20:00:00.000Z,
-    //    age: 18
+    //     id: 8803,
+    //     uuid: '8c3e95c3-2bd1-40f9-a0e1-0a81e660e781',
+    //     familyName: 'Худяков',
+    //     givenName: 'Архипп',
+    //     patronym: 'Провович',
+    //     gender: 'm',
+    //     nickName: 'Yohafu',
+    //     email: 'yohafu@rambler.ru',
+    //     phone: 79276164924,
+    //     birthDate: 1973-04-17T04:56:06.000Z,
+    //    age: 46
     // }
 
     // Или ... где N - количество генераций
 
     node test.js N
+
+## Пользовательские генерации
+Для примера я добавил генератор names:
+
+    lib.addGenerator('names', (utils, data) => {
+        return {
+            fullName: [data.familyName, data.givenName, data.patronym].join(' '),
+            shortName: [data.givenName, data.patronym.substr(0, 1) + '.', data.familyName].join(' '),
+            pseudoName: [data.givenName, '`' + data.nickName + '`', data.familyName].join(' '),
+            initialsName: [data.familyName, data.givenName.substr(0, 1) + '.' + data.patronym.substr(0, 1) + '.'].join(' ')
+        }
+    });
+
+После чего в выдаче появились дополнительные поля
+
+    // {
+    //     fullName: 'Худяков Архипп Провович',
+    //     shortName: 'Архипп П. Худяков',
+    //     pseudoName: 'Архипп `Yohafu` Худяков',
+    //     initialsName: 'Худяков А.П.'
+    // }
+
+## Список генераторов
+
+    let gList = lib.showGenerators(); // :)
+
+### PS: Я в шоке, о Боже, вот это да!
+Это не я писал. Это друзья камит докинули.

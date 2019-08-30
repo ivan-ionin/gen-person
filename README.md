@@ -6,7 +6,9 @@
 
 ## По этому
 
-    console.log(require('gen-person').gen());
+    const lib = require('gen-person');
+
+    console.log(lib.generate());
 
 ...
 
@@ -51,9 +53,15 @@
     //     initialsName: 'Худяков А.П.'
     // }
 
+Удаление генераторов
+
+    lib.remGenerator('names');
+
 ## Список генераторов
 
-    let gList = lib.showGenerators(); // :)
+    let gList = lib.showGenerators();
+
+    console.log(gList, ':)');
 
 ### PS: Я в шоке, о Боже, вот это да!
 Это не я писал. Это друзья камит докинули.
